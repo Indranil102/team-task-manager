@@ -1,17 +1,52 @@
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import API from "../services/api";
+
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+
 function Login() {
+
+  const navigate = useNavigate();
+
   const { login } = useContext(AuthContext);
-const navigate = useNavigate();
-const handleLogin = (e) => {
-  e.preventDefault();
 
-  login("fake-jwt-token");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  navigate("/dashboard");
-};
+  const handleChange = (e) => {
+
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+
+  };
+
+  const handleLogin = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      const response = await API.post(
+        "/auth/login",
+        formData
+      );
+
+      login(response.data.access_token);
+
+      navigate("/dashboard");
+
+    } catch (error) {
+
+      console.log(error.response.data);
+
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
 
@@ -21,17 +56,26 @@ const handleLogin = (e) => {
           Login
         </h1>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form
+          onSubmit={handleLogin}
+          className="space-y-4"
+        >
 
           <input
             type="email"
+            name="email"
             placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
             className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none"
           />
 
           <input
             type="password"
+            name="password"
             placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
             className="w-full border border-slate-300 rounded-lg px-4 py-3 outline-none"
           />
 
