@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
-
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 function Login() {
+  const { login } = useContext(AuthContext);
+const navigate = useNavigate();
+const handleLogin = (e) => {
+  e.preventDefault();
+
+  login("fake-jwt-token");
+
+  navigate("/dashboard");
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
 
@@ -10,7 +21,7 @@ function Login() {
           Login
         </h1>
 
-        <form className="space-y-4">
+        <form onSubmit={handleLogin} className="space-y-4">
 
           <input
             type="email"
