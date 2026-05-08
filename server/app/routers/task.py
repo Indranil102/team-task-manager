@@ -28,7 +28,6 @@ def create_task(
         project_id=task.project_id,
         owner_id=user["user_id"]
     )
-
     db.add(new_task)
 
     db.commit()
