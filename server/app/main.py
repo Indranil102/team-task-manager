@@ -4,6 +4,7 @@ from app.database.db import Base, engine
 from app.models.project import Project
 from app.models.user import User
 from app.models.task import Task
+from app.routers.task import router as task_router
 from app.routers.project import router as project_router
 from app.routers.auth import router as auth_router
 Base.metadata.create_all(bind=engine)
@@ -23,6 +24,7 @@ app.add_middleware(
 )
 app.include_router(auth_router)
 app.include_router(project_router)
+app.include_router(task_router)
 @app.get("/")
 def home():
     return {"message": "API Running"}
