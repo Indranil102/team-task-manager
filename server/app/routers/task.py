@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-
+from datetime import date
 from sqlalchemy.orm import Session
 
 from app.database.deps import get_db
@@ -46,3 +46,55 @@ def get_tasks(
     tasks = db.query(Task).all()
 
     return tasks
+
+@router.put("/{task_id}")
+def update_task_status(
+    task_id: int,
+    status: str,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+
+    task = db.query(Task).filter(
+        Task.id == task_id
+    ).first()
+
+    if not task:
+        return {
+            "message": "Task not found"
+        }
+
+    task.status = status
+
+    db.commit()
+
+    return {
+        "message": "Task updated"
+    }
+@router.get("/stats/dashboard")
+def dashboard_stats(
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+
+    total_tasks = db.query(Task).count()
+
+    completed_tasks = db.query(Task).filter(
+        Task.status == "Completed"
+    ).count()
+
+    pending_tasks = db.query(Task).filter(
+        Task.status == "Pending"
+    ).count()
+
+    overdue_tasks = db.query(Task).filter(
+        Task.due_date < date.today(),
+        Task.status != "Completed"
+    ).count()
+
+    return {
+        "total_tasks": total_tasks,
+        "completed_tasks": completed_tasks,
+        "pending_tasks": pending_tasks,
+        "overdue_tasks": overdue_tasks
+    }
