@@ -25,7 +25,8 @@ def create_task(
         title=task.title,
         description=task.description,
         due_date=task.due_date,
-        project_id=task.project_id
+        project_id=task.project_id,
+        owner_id=user["user_id"]
     )
 
     db.add(new_task)
@@ -43,7 +44,9 @@ def get_tasks(
     user = Depends(get_current_user)
 ):
 
-    tasks = db.query(Task).all()
+    tasks = db.query(Task).filter(
+    Task.owner_id == user["user_id"]
+).all()
 
     return tasks
 

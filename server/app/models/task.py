@@ -33,3 +33,4 @@ class Task(Base):
     )
 
     project = relationship("Project")
+    owner_id = Column(Integer, ForeignKey("users.id"))
