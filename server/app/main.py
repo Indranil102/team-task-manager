@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.db import Base, engine
+from app.models.project import Project
 from app.models.user import User
+from app.routers.project import router as project_router
 from app.routers.auth import router as auth_router
 Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
 origins = [
@@ -18,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(project_router)
 @app.get("/")
 def home():
     return {"message": "API Running"}
