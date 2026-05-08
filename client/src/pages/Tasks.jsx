@@ -98,7 +98,13 @@ function Tasks() {
   try {
 
     await API.put(
-      `/tasks/${taskId}?status=${status}`
+      `/tasks/${taskId}`,
+      {},
+      {
+        params: {
+          status,
+        },
+      }
     );
 
     fetchTasks();
@@ -185,7 +191,17 @@ function Tasks() {
 
           <div
             key={task.id}
-            className="bg-white border border-slate-200 rounded-xl p-5"
+            className={`rounded-xl p-5 border
+
+${
+  new Date(task.due_date) < new Date() &&
+  task.status !== "Completed"
+
+    ? "bg-red-50 border-red-200"
+
+    : "bg-white border-slate-200"
+}
+`}
           >
 
             <div className="flex items-center justify-between">
@@ -195,6 +211,7 @@ function Tasks() {
               </h2>
 
               <select
+    key={task.id}
   value={task.status}
   onChange={(e) =>
     updateTaskStatus(
@@ -202,7 +219,18 @@ function Tasks() {
       e.target.value
     )
   }
-  className="text-sm border border-slate-300 rounded-full px-3 py-1 outline-none"
+  className={`text-sm rounded-full px-3 py-1 outline-none border
+
+${
+  task.status === "Completed"
+    ? "bg-green-100 text-green-700 border-green-200"
+
+    : task.status === "In Progress"
+    ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+
+    : "bg-slate-100 text-slate-700 border-slate-200"
+}
+`}
 >
 
   <option value="Pending">
